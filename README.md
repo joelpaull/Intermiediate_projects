@@ -1,4 +1,4 @@
-# Intermiediate_projects
+# Intermediate_projects
 
 All projects are my own thought out code developed via the 100 day python course I am on. 
 
