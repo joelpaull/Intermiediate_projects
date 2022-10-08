@@ -9,6 +9,7 @@ screen.setup(width=500, height=400)
 turtle_colour = ["red", "orange", "yellow", "green", "blue", "purple"]
 turtles = []
 y_coord = (-80, -40, 0, 40, 80, 120)
+screen.title("Turtle Race")
 
 def make_turtle(turtle_name, colour, y):
     turtle_name = Turtle("turtle")
