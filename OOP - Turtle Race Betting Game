@@ -1,0 +1,46 @@
+from turtle import Turtle, Screen
+import turtle
+import random
+
+is_race_on = False
+
+screen = Screen()
+screen.setup(width=500, height=400)
+turtle_colour = ["red", "orange", "yellow", "green", "blue", "purple"]
+turtles = []
+y_coord = (-80, -40, 0, 40, 80, 120)
+
+def make_turtle(turtle_name, colour, y):
+    turtle_name = Turtle("turtle")
+    turtle_name.color(colour)
+    turtle_name.penup()
+    turtle_name.goto(x=-200, y=y)
+    turtles.append(turtle_name)
+
+
+def race():
+    for n in turtles:
+        n.forward(random.randint(0, 10))
+        if n.xcor() >= 200:
+            global is_race_on
+            is_race_on = False
+            return n.fillcolor()
+
+
+for n, i in zip(turtle_colour, y_coord):
+    make_turtle(n, n, i)
+
+user_bet = screen.textinput(title="Turtle Race", prompt="Which turtle do you wish to bet on?")
+
+if user_bet:
+    is_race_on = True
+
+winner = ''
+while is_race_on:
+    winner = race()
+
+if user_bet.capitalize() == winner.capitalize():
+    print(f"{winner.capitalize()} Won! You got it right!")
+else:
+    print(f"{winner.capitalize()} won..You lose")
+screen.exitonclick()
