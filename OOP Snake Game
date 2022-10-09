@@ -1,0 +1,162 @@
+File 1 : snake.py (controls snake)
+from turtle import Turtle
+
+START_POSITION = [(0, 0), (-20, 0), (-40,0)]
+MOVE_DISTANCE = 20
+UP = 90
+DOWN = 270
+LEFT = 180
+RIGHT = 0
+
+
+class Snake:
+
+    def __init__(self):
+        self.snake_body = []
+        self.create_snake()
+        self.head = self.snake_body[0]
+
+    def create_snake(self):
+        for pos in START_POSITION:
+            self.add_body_part(pos)
+
+    def add_body_part(self, position):
+        snake = Turtle("square")
+        snake.color("white")
+        snake.penup()
+        snake.goto(position)
+        snake.speed("fastest")
+        self.snake_body.append(snake)
+
+    def grow_on_eating(self):
+        self.add_body_part(self.snake_body[-1].position())
+
+    def move(self):
+        for body_num in range(len(self.snake_body) - 1, 0, -1):
+            new_x = self.snake_body[body_num - 1].xcor()
+            new_y = self.snake_body[body_num - 1].ycor()
+            self.snake_body[body_num].goto(x=new_x, y=new_y)
+        self.head.forward(MOVE_DISTANCE)
+
+    def face_up(self):
+        if self.head.heading() != DOWN:
+            self.head.setheading(UP)
+
+    def face_down(self):
+        if self.head.heading() != UP:
+            self.head.setheading(DOWN)
+
+    def face_left(self):
+        if self.head.heading() != RIGHT:
+            self.head.setheading(LEFT)
+
+    def face_right(self):
+        if self.head.heading() != LEFT:
+            self.head.setheading(RIGHT)
+
+    def hit_wall(self):
+        if self.head.xcor() >= 300 or self.head.xcor() <= -300 or self.head.ycor() >= 300 or self.head.ycor() <= -300:
+            return True
+
+File 2: scoreboard.py (controls scoreboard)
+from turtle import Turtle
+FONT = ("courier", 15, "normal")
+
+class Scoreboard(Turtle):
+
+    def __init__(self):
+        super().__init__()
+        self.hideturtle()
+        self.penup()
+        self.pencolor("white")
+        self.score = 0
+        self.goto(0, 270)
+        self.write(arg=f"Score: {self.score}", align="center", font=FONT)
+
+    def add_score(self):
+        self.score += 1
+        self.clear()
+        self.write(arg=f"Score: {self.score}", align="center", font=FONT)
+
+    def game_over(self):
+        self.goto(0, 0)
+        self.write(arg=f"GAME OVER, Score: {self.score}", align="center", font=FONT)
+  
+File 3: food.py (controls appearance/dissapearance of 'food')
+from turtle import Turtle
+import random
+
+
+class Food(Turtle):
+
+    def __init__(self):
+        super().__init__()
+        self.shape("circle")
+        self.shapesize(stretch_len=0.5, stretch_wid=0.5)
+        self.color("blue")
+        self.penup()
+        self.speed("fastest")
+        self.goto(random.randint(-255, 255), random.randint(-255, 255))
+
+    def refresh(self):
+        self.goto(random.randint(-255, 255), random.randint(-255, 255))
+
+File 4: main.py
+from turtle import Screen
+import time
+from snake import Snake
+from food import Food
+from scoreboard import Scoreboard
+
+screen = Screen()
+screen.setup(width=600, height=600)
+screen.bgcolor("Black")
+screen.title("Snake Game")
+screen.tracer(0)
+
+play_again = True
+while play_again:
+    snake = Snake()
+    food = Food()
+    scoreboard = Scoreboard()
+    screen.listen()
+    screen.onkey(key="Left", fun=snake.face_left)
+    screen.onkey(key="Right", fun=snake.face_right)
+    screen.onkey(key="Down", fun=snake.face_down)
+    screen.onkey(key="Up", fun=snake.face_up)
+
+    game_on = True
+    speed = 0.1
+    while game_on:
+        if speed > 0.03:
+            speed -= 0.00005
+        if snake.hit_wall():
+            game_on = False
+
+        for n in snake.snake_body:
+            if snake.head == n:
+                pass
+            elif snake.head.distance(n) < 10:
+                game_on = False
+
+        screen.update()
+        time.sleep(speed)
+        snake.move()
+    #     Detect Food collision
+        if int(snake.head.distance(food)) < 20:
+            food.refresh()
+            scoreboard.add_score()
+            snake.grow_on_eating()
+    scoreboard.game_over()
+    # Ask user to play again:
+    time.sleep(0.75)
+    replay = screen.textinput(title="Snake", prompt="Do you want to play again? 'Yes' or 'No'")
+    if replay.lower() == "no":
+        play_again = False
+
+    for n in snake.snake_body:
+        n.reset()
+    food.reset()
+    scoreboard.reset()
+
+screen.exitonclick()
