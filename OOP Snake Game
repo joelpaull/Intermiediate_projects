@@ -133,10 +133,8 @@ while play_again:
         if snake.hit_wall():
             game_on = False
 
-        for n in snake.snake_body:
-            if snake.head == n:
-                pass
-            elif snake.head.distance(n) < 10:
+        for n in snake.snake_body[1:]:
+            if snake.head.distance(n) < 10:
                 game_on = False
 
         screen.update()
