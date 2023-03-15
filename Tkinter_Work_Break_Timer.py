@@ -1,4 +1,4 @@
-File 1: Main
+
 from tkinter import *
 import math
 PINK = "#e2979c"
@@ -86,5 +86,3 @@ check_marks = Label(bg=YELLOW, fg=GREEN)
 check_marks.grid(column=2, row=4)
 
 window.mainloop()
-
-File 2: tomato.png
